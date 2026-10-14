@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboard - PointKu</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .animate-fade-in { animation: fadeIn 0.6s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .glass { background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); }
+        .gold { background: linear-gradient(135deg, #f6d365 0%, #fda085 100%); }
+        .silver { background: linear-gradient(135deg, #a8c0ff 0%, #3f2b96 100%); }
+        .bronze { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Navbar -->
+    <nav class="gradient-bg shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-graduation-cap text-white text-2xl"></i>
+                    <span class="text-white font-bold text-xl">PointKu</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="index.html" class="text-white/80 hover:text-white transition font-medium">
+                        <i class="fas fa-home mr-1"></i> Beranda
+                    </a>
+                    <a href="login.html" class="glass text-white px-4 py-2 rounded-lg hover:bg-white/20 transition font-medium">
+                        <i class="fas fa-lock mr-1"></i> Admin
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <div class="gradient-bg pb-20 pt-12">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <h1 class="text-4xl font-extrabold text-white mb-2"><i class="fas fa-trophy mr-3"></i>Leaderboard</h1>
+            <p class="text-white/80 text-lg">Peringkat mahasiswa berdasarkan total point keaktifan</p>
+        </div>
+    </div>
+
+    <!-- Leaderboard Content -->
+    <div class="max-w-4xl mx-auto px-4 -mt-12 relative z-10 mb-16">
+        <!-- Top 3 -->
+        <div id="topThree" class="grid md:grid-cols-3 gap-4 mb-8 animate-fade-in">
+            <div class="text-center text-gray-400 py-8"><i class="fas fa-spinner fa-spin text-xl"></i></div>
+        </div>
+
+        <!-- Rest of leaderboard -->
+        <div class="bg-white rounded-2xl shadow-md overflow-hidden animate-fade-in">
+            <div class="p-6 border-b border-gray-100">
+                <h2 class="text-lg font-bold text-gray-800">Peringkat Lengkap</h2>
+            </div>
+            <div id="leaderboardTable" class="divide-y divide-gray-100">
+                <div class="px-6 py-8 text-center text-gray-400"><i class="fas fa-spinner fa-spin"></i> Memuat data...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-8">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <div class="flex items-center justify-center space-x-2 mb-3">
+                <i class="fas fa-graduation-cap text-purple-400"></i>
+                <span class="font-bold">PointKu</span>
+            </div>
+            <p class="text-gray-400 text-sm">&copy; 2026 Sistem Point Keaktifan Mahasiswa. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/env.js"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/leaderboard.js"></script>
+</body>
+</html>

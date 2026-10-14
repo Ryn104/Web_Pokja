@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin - PointKu</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .animate-fade-in { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        .glass { background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Navbar -->
+    <nav class="gradient-bg shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-graduation-cap text-white text-2xl"></i>
+                    <span class="text-white font-bold text-xl">PointKu</span>
+                    <span class="glass text-white text-xs px-2 py-1 rounded-full">Admin</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-white/80 text-sm hidden sm:block" id="adminEmail"></span>
+                    <button onclick="handleLogout()" class="glass text-white px-4 py-2 rounded-lg hover:bg-white/20 transition font-medium text-sm">
+                        <i class="fas fa-sign-out-alt mr-1"></i> Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        <!-- Stats Cards -->
+        <div class="grid md:grid-cols-3 gap-6 mb-8 animate-fade-in">
+            <div class="bg-white rounded-2xl shadow-md p-6 border-l-4 border-blue-500">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm font-medium">Total Mahasiswa</p>
+                        <p class="text-3xl font-bold text-gray-800" id="totalMahasiswa">0</p>
+                    </div>
+                    <div class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-users text-blue-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-2xl shadow-md p-6 border-l-4 border-green-500">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm font-medium">Total Point Diberikan</p>
+                        <p class="text-3xl font-bold text-gray-800" id="totalPoints">0</p>
+                    </div>
+                    <div class="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-star text-green-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-2xl shadow-md p-6 border-l-4 border-purple-500">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm font-medium">Transaksi Hari Ini</p>
+                        <p class="text-3xl font-bold text-gray-800" id="todayTransactions">0</p>
+                    </div>
+                    <div class="w-14 h-14 bg-purple-100 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-exchange-alt text-purple-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-wrap gap-3 mb-8 animate-fade-in">
+            <button onclick="openModal('addStudent')" class="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-5 py-2.5 rounded-xl hover:shadow-lg transition-all font-medium">
+                <i class="fas fa-user-plus mr-2"></i> Tambah Mahasiswa
+            </button>
+            <button onclick="openModal('importCsv')" class="bg-gradient-to-r from-indigo-500 to-indigo-600 text-white px-5 py-2.5 rounded-xl hover:shadow-lg transition-all font-medium">
+                <i class="fas fa-file-csv mr-2"></i> Import CSV
+            </button>
+            <button onclick="openModal('addPoint')" class="bg-gradient-to-r from-green-500 to-green-600 text-white px-5 py-2.5 rounded-xl hover:shadow-lg transition-all font-medium">
+                <i class="fas fa-plus-circle mr-2"></i> Tambah Point
+            </button>
+            <button onclick="openModal('reducePoint')" class="bg-gradient-to-r from-red-500 to-red-600 text-white px-5 py-2.5 rounded-xl hover:shadow-lg transition-all font-medium">
+                <i class="fas fa-minus-circle mr-2"></i> Kurangi Point
+            </button>
+        </div>
+
+        <!-- Search Table -->
+        <div class="bg-white rounded-2xl shadow-md p-6 mb-8 animate-fade-in">
+            <div class="flex flex-col sm:flex-row gap-3">
+                <div class="flex-1 relative">
+                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" id="searchInput" placeholder="Cari berdasarkan NIM, nama, atau kelas..." 
+                        oninput="searchMahasiswa()"
+                        class="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none transition">
+                </div>
+                <button onclick="loadMahasiswa()" class="bg-gray-100 text-gray-700 px-5 py-3 rounded-xl hover:bg-gray-200 transition font-medium">
+                    <i class="fas fa-sync-alt mr-2"></i> Refresh
+                </button>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="bg-white rounded-2xl shadow-md overflow-hidden animate-fade-in">
+            <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+                <h2 class="text-xl font-bold text-gray-800"><i class="fas fa-list mr-2 text-purple-500"></i>Daftar Mahasiswa</h2>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">No</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">NIM</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Nama</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Kelas</th>
+                            <th class="px-6 py-4 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">Total Point</th>
+                            <th class="px-6 py-4 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">Aksi Cepat</th>
+                        </tr>
+                    </thead>
+                    <tbody id="mahasiswaTable" class="divide-y divide-gray-100">
+                        <tr>
+                            <td colspan="6" class="px-6 py-12 text-center text-gray-400">
+                                <i class="fas fa-spinner fa-spin text-2xl mb-2"></i>
+                                <p>Memuat data...</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Add Student -->
+    <div id="modal-addStudent" class="fixed inset-0 bg-black/50 z-50 items-center justify-center p-4" style="display:none;">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 animate-fade-in">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-gray-800"><i class="fas fa-user-plus mr-2 text-blue-500"></i>Tambah Mahasiswa</h3>
+                <button onclick="closeModal('addStudent')" class="text-gray-400 hover:text-gray-600 text-xl"><i class="fas fa-times"></i></button>
+            </div>
+            <form onsubmit="tambahMahasiswa(event)">
+                <div class="mb-4">
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">NIM</label>
+                    <input type="text" id="inputNIM" required class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 outline-none transition" placeholder="Contoh: 2024001">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Nama Lengkap</label>
+                    <input type="text" id="inputNama" required class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 outline-none transition" placeholder="Contoh: John Doe">
+                </div>
+                <div class="mb-6">
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Kelas</label>
+                    <input type="text" id="inputKelas" required class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 outline-none transition" placeholder="Contoh: TI-1A">
+                </div>
+                <button type="submit" class="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 rounded-xl hover:shadow-lg transition-all font-semibold">
+                    <i class="fas fa-save mr-2"></i> Simpan
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Import CSV -->
+    <div id="modal-importCsv" class="fixed inset-0 bg-black/50 z-50 items-center justify-center p-4" style="display:none;">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 animate-fade-in">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-gray-800"><i class="fas fa-file-csv mr-2 text-indigo-500"></i>Import Mahasiswa via CSV</h3>
+                <button onclick="closeModal('importCsv')" class="text-gray-400 hover:text-gray-600 text-xl"><i class="fas fa-times"></i></button>
+            </div>
+            
+            <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-4 mb-4 text-xs text-indigo-800">
+                <p class="font-bold mb-1">Format Kolom File CSV:</p>
+                <code class="bg-white px-2 py-0.5 rounded border border-indigo-200 block mb-2 font-mono">nim,nama,kelas</code>
+                <p>Contoh isi file:</p>
+                <pre class="bg-white p-2 rounded border border-indigo-200 text-gray-600 font-mono mt-1">2024001,Budi Santoso,TI-1A
+2024002,Siti Aminah,TI-1A
+2024003,Riyan Handriyana,TI-1B</pre>
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Pilih File CSV (.csv)</label>
+                <input type="file" id="csvFileInput" accept=".csv" 
+                    class="w-full p-2 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-indigo-400">
+            </div>
+
+            <div id="csvPreview" class="hidden mb-4 max-h-40 overflow-y-auto text-xs bg-gray-50 p-3 rounded-xl border border-gray-200">
+            </div>
+
+            <button type="button" id="btnUploadCsv" onclick="prosesImportCsv()" 
+                class="w-full bg-gradient-to-r from-indigo-500 to-indigo-600 text-white py-3 rounded-xl hover:shadow-lg transition-all font-semibold">
+                <i class="fas fa-upload mr-2"></i> Mulai Import Data
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal: Add Point (Kategori Otomatis & Search Mahasiswa) -->
+    <div id="modal-addPoint" class="fixed inset-0 bg-black/50 z-50 items-center justify-center p-4" style="display:none;">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 animate-fade-in">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-gray-800"><i class="fas fa-plus-circle mr-2 text-green-500"></i>Tambah Point</h3>
+                <button onclick="closeModal('addPoint')" class="text-gray-400 hover:text-gray-600 text-xl"><i class="fas fa-times"></i></button>
+            </div>
+            <form onsubmit="tambahPoint(event)">
+                <!-- Search Mahasiswa -->
+                <div class="mb-4 relative">
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Cari Mahasiswa (NIM / Nama)</label>
+                    <div class="relative">
+                        <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        <input type="text" id="pointSearchInput" autocomplete="off"
+                            placeholder="Ketik NIM atau Nama..." 
+                            oninput="filterSearchStudent('addPoint')"
+                            onfocus="filterSearchStudent('addPoint')"
+                            class="w-full pl-11 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 outline-none transition">
+                    </div>
+                    <input type="hidden" id="pointNIM" required>
+                    <!-- Search Dropdown List -->
+                    <div id="addPointDropdown" class="hidden absolute left-0 right-0 top-full mt-1 bg-white border border-gray-200 rounded-xl shadow-xl max-h-48 overflow-y-auto z-20">
+                    </div>
+                    <div id="pointSelectedInfo" class="mt-2 text-xs text-green-700 font-medium hidden bg-green-50 p-2 rounded-lg border border-green-200">
+                    </div>
+                </div>
+
+                <!-- Kategori Pilihan (Point otomatis terikat) -->
+                <div class="mb-4">
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Aktivitas / Kategori</label>
+                    <select id="pointKategori" required onchange="updatePointBadge()"
+                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 outline-none transition bg-white">
+                        <option value="">-- Pilih Aktivitas --</option>
+                        <option value="Kehadiran" data-point="1">Masuk Kelas / Kehadiran (+1 Point)</option>
+                        <option value="Aktif di Kelas" data-point="1">Aktif di Kelas (Tanya/Jawab) (+1 Point)</option>
+                        <option value="Tugas Tepat Waktu" data-point="2">Tugas Tepat Waktu (+2 Point)</option>
+                        <option value="Presentasi" data-point="3">Presentasi di Kelas (+3 Point)</option>
+                    </select>
+                    <!-- Badge Point Otomatis -->
+                    <div id="pointBadge" class="mt-2 flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-200">
+                        <span class="text-xs text-gray-500">Nilai Point Otomatis:</span>
+                        <span id="pointDisplay" class="font-bold text-green-600 text-lg">+0 Point</span>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Keterangan Tambahan</label>
+                    <textarea id="pointKeterangan" rows="2" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 outline-none transition" placeholder="Catatan tambahan (opsional)"></textarea>
+                </div>
+                <button type="submit" class="w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-3 rounded-xl hover:shadow-lg transition-all font-semibold">
+                    <i class="fas fa-plus mr-2"></i> Tambah Point Sekarang
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Reduce Point (Search Mahasiswa) -->
+    <div id="modal-reducePoint" class="fixed inset-0 bg-black/50 z-50 items-center justify-center p-4" style="display:none;">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 animate-fade-in">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-gray-800"><i class="fas fa-minus-circle mr-2 text-red-500"></i>Kurangi Point</h3>
+                <button onclick="closeModal('reducePoint')" class="text-gray-400 hover:text-gray-600 text-xl"><i class="fas fa-times"></i></button>
+            </div>
+            <form onsubmit="kurangiPoint(event)">
+                <!-- Search Mahasiswa -->
+                <div class="mb-4 relative">
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Cari Mahasiswa (NIM / Nama)</label>
+                    <div class="relative">
+                        <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        <input type="text" id="reduceSearchInput" autocomplete="off"
+                            placeholder="Ketik NIM atau Nama..." 
+                            oninput="filterSearchStudent('reducePoint')"
+                            onfocus="filterSearchStudent('reducePoint')"
+                            class="w-full pl-11 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 outline-none transition">
+                    </div>
+                    <input type="hidden" id="reduceNIM" required>
+                    <!-- Search Dropdown List -->
+                    <div id="reducePointDropdown" class="hidden absolute left-0 right-0 top-full mt-1 bg-white border border-gray-200 rounded-xl shadow-xl max-h-48 overflow-y-auto z-20">
+                    </div>
+                    <div id="reduceSelectedInfo" class="mt-2 text-xs text-red-700 font-medium hidden bg-red-50 p-2 rounded-lg border border-red-200">
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Kategori Pengurangan</label>
+                    <select id="reduceKategori" required onchange="updateReduceBadge()"
+                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 outline-none transition bg-white">
+                        <option value="">-- Pilih Jenis Pelanggaran --</option>
+                        <option value="Tidak Hadir / Membolos" data-point="1">Tidak Hadir / Membolos (-1 Point)</option>
+                        <option value="Terlambat Kelas" data-point="1">Terlambat Kelas (-1 Point)</option>
+                        <option value="Tidak Mengumpulkan Tugas" data-point="2">Tidak Mengumpulkan Tugas (-2 Point)</option>
+                        <option value="Pelanggaran Disiplin" data-point="3">Pelanggaran Disiplin Kelas (-3 Point)</option>
+                    </select>
+                    <div class="mt-2 flex items-center justify-between p-3 bg-red-50 rounded-xl border border-red-200">
+                        <span class="text-xs text-red-600">Pengurangan Point:</span>
+                        <span id="reduceDisplay" class="font-bold text-red-600 text-lg">-0 Point</span>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Alasan Detail</label>
+                    <textarea id="reduceAlasan" rows="2" required class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 outline-none transition" placeholder="Tulis alasan pengurangan point..."></textarea>
+                </div>
+                <button type="submit" class="w-full bg-gradient-to-r from-red-500 to-red-600 text-white py-3 rounded-xl hover:shadow-lg transition-all font-semibold">
+                    <i class="fas fa-minus mr-2"></i> Kurangi Point Sekarang
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: History -->
+    <div id="modal-history" class="fixed inset-0 bg-black/50 z-50 items-center justify-center p-4" style="display:none;">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 animate-fade-in max-h-[80vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-gray-800"><i class="fas fa-history mr-2 text-purple-500"></i>Riwayat Point</h3>
+                <button onclick="closeModal('history')" class="text-gray-400 hover:text-gray-600 text-xl"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="historyContent">
+                <p class="text-gray-400 text-center py-4">Memuat riwayat...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/env.js"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>
