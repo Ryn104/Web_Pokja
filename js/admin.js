@@ -108,7 +108,7 @@ function renderTable(data) {
                 <span class="font-medium text-gray-800">${mhs.nama}</span>
             </td>
             <td class="px-6 py-4">
-                <span class="text-sm bg-purple-50 text-purple-700 px-2.5 py-1 rounded-full font-medium">${mhs.kelas}</span>
+                <span class="text-sm bg-blue-50 text-blue-700 px-2.5 py-1 rounded-full font-medium">${mhs.kelas}</span>
             </td>
             <td class="px-6 py-4 text-center">
                 <span class="inline-flex items-center bg-gradient-to-r from-green-50 to-emerald-50 text-green-700 px-3.5 py-1 rounded-full font-bold text-lg">
@@ -118,7 +118,7 @@ function renderTable(data) {
             <td class="px-6 py-4 text-center">
                 <div class="flex items-center justify-center space-x-2">
                     <button onclick="viewHistory('${mhs.nim}', '${mhs.nama}')" 
-                        class="text-purple-500 hover:text-purple-700 hover:bg-purple-50 p-2 rounded-lg transition" title="Riwayat Point">
+                        class="text-blue-500 hover:text-blue-700 hover:bg-blue-50 p-2 rounded-lg transition" title="Riwayat Point">
                         <i class="fas fa-history"></i>
                     </button>
                     <button onclick="quickAdd('${mhs.nim}', '${mhs.nama}')" 
@@ -188,7 +188,7 @@ function filterSearchStudent(type) {
 
     dropdown.innerHTML = matches.map(m => `
         <div onclick="selectStudent('${type}', '${m.nim}', '${m.nama.replace(/'/g, "\\'")}', '${m.kelas}')"
-            class="px-4 py-2.5 hover:bg-purple-50 cursor-pointer border-b border-gray-100 last:border-b-0 flex justify-between items-center transition">
+            class="px-4 py-2.5 hover:bg-blue-50 cursor-pointer border-b border-gray-100 last:border-b-0 flex justify-between items-center transition">
             <div>
                 <p class="font-semibold text-gray-800 text-sm">${m.nama}</p>
                 <p class="text-xs text-gray-500 font-mono">${m.nim} • ${m.kelas}</p>

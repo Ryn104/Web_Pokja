@@ -60,9 +60,9 @@ async function cekPoint() {
             .limit(5);
 
         resultDiv.innerHTML = `
-            <div class="bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 rounded-xl p-6">
+            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-6">
                 <div class="flex flex-col sm:flex-row items-center sm:items-start gap-4">
-                    <div class="w-20 h-20 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg">
+                    <div class="w-20 h-20 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg">
                         <span class="text-white text-2xl font-bold">${mhs.nama.charAt(0).toUpperCase()}</span>
                     </div>
                     <div class="flex-1 text-center sm:text-left">
@@ -77,7 +77,7 @@ async function cekPoint() {
                 </div>
 
                 ${history && history.length > 0 ? `
-                    <div class="mt-6 border-t border-purple-200 pt-4">
+                    <div class="mt-6 border-t border-blue-200 pt-4">
                         <h4 class="text-sm font-semibold text-gray-600 mb-3">
                             <i class="fas fa-history mr-1"></i> Riwayat Terbaru
                         </h4>

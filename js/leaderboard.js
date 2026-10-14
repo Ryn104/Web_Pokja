@@ -80,7 +80,7 @@ function renderLeaderboard(data) {
                     `<span class="text-gray-400 font-medium">${i + 1}</span>`
                 }
             </div>
-            <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl flex items-center justify-center ml-3 flex-shrink-0">
+            <div class="w-12 h-12 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-xl flex items-center justify-center ml-3 flex-shrink-0">
                 <span class="text-white font-bold">${mhs.nama.charAt(0).toUpperCase()}</span>
             </div>
             <div class="ml-4 flex-1">

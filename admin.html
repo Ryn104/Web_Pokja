@@ -10,7 +10,7 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
         body { font-family: 'Inter', sans-serif; }
-        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .gradient-bg { background: linear-gradient(135deg, #0b1533 0%, #0d1e48 50%, #152c66 100%); }
         .animate-fade-in { animation: fadeIn 0.4s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         .glass { background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); }
@@ -22,7 +22,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16 items-center">
                 <div class="flex items-center space-x-3">
-                    <i class="fas fa-graduation-cap text-white text-2xl"></i>
+                    <img src="assets/logo.png" alt="HMIF Logo" class="h-9 w-auto bg-white rounded-lg p-1 object-contain">
                     <span class="text-white font-bold text-xl">PointKu</span>
                     <span class="glass text-white text-xs px-2 py-1 rounded-full">Admin</span>
                 </div>
@@ -61,14 +61,14 @@
                     </div>
                 </div>
             </div>
-            <div class="bg-white rounded-2xl shadow-md p-6 border-l-4 border-purple-500">
+            <div class="bg-white rounded-2xl shadow-md p-6 border-l-4 border-blue-600">
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-gray-500 text-sm font-medium">Transaksi Hari Ini</p>
                         <p class="text-3xl font-bold text-gray-800" id="todayTransactions">0</p>
                     </div>
-                    <div class="w-14 h-14 bg-purple-100 rounded-xl flex items-center justify-center">
-                        <i class="fas fa-exchange-alt text-purple-600 text-xl"></i>
+                    <div class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-exchange-alt text-blue-600 text-xl"></i>
                     </div>
                 </div>
             </div>
@@ -76,16 +76,16 @@
 
         <!-- Action Buttons -->
         <div class="flex flex-wrap gap-3 mb-8 animate-fade-in">
-            <button onclick="openModal('addStudent')" class="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-5 py-2.5 rounded-xl hover:shadow-lg transition-all font-medium">
+            <button onclick="openModal('addStudent')" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl hover:shadow-lg transition-all font-medium">
                 <i class="fas fa-user-plus mr-2"></i> Tambah Mahasiswa
             </button>
-            <button onclick="openModal('importCsv')" class="bg-gradient-to-r from-indigo-500 to-indigo-600 text-white px-5 py-2.5 rounded-xl hover:shadow-lg transition-all font-medium">
+            <button onclick="openModal('importCsv')" class="bg-slate-700 hover:bg-slate-800 text-white px-5 py-2.5 rounded-xl hover:shadow-lg transition-all font-medium">
                 <i class="fas fa-file-csv mr-2"></i> Import CSV
             </button>
-            <button onclick="openModal('addPoint')" class="bg-gradient-to-r from-green-500 to-green-600 text-white px-5 py-2.5 rounded-xl hover:shadow-lg transition-all font-medium">
+            <button onclick="openModal('addPoint')" class="bg-green-600 hover:bg-green-700 text-white px-5 py-2.5 rounded-xl hover:shadow-lg transition-all font-medium">
                 <i class="fas fa-plus-circle mr-2"></i> Tambah Point
             </button>
-            <button onclick="openModal('reducePoint')" class="bg-gradient-to-r from-red-500 to-red-600 text-white px-5 py-2.5 rounded-xl hover:shadow-lg transition-all font-medium">
+            <button onclick="openModal('reducePoint')" class="bg-red-600 hover:bg-red-700 text-white px-5 py-2.5 rounded-xl hover:shadow-lg transition-all font-medium">
                 <i class="fas fa-minus-circle mr-2"></i> Kurangi Point
             </button>
         </div>
@@ -97,7 +97,7 @@
                     <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
                     <input type="text" id="searchInput" placeholder="Cari berdasarkan NIM, nama, atau kelas..." 
                         oninput="searchMahasiswa()"
-                        class="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none transition">
+                        class="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-600 focus:ring-2 focus:ring-blue-100 outline-none transition">
                 </div>
                 <button onclick="loadMahasiswa()" class="bg-gray-100 text-gray-700 px-5 py-3 rounded-xl hover:bg-gray-200 transition font-medium">
                     <i class="fas fa-sync-alt mr-2"></i> Refresh
@@ -108,7 +108,7 @@
         <!-- Table -->
         <div class="bg-white rounded-2xl shadow-md overflow-hidden animate-fade-in">
             <div class="p-6 border-b border-gray-100 flex justify-between items-center">
-                <h2 class="text-xl font-bold text-gray-800"><i class="fas fa-list mr-2 text-purple-500"></i>Daftar Mahasiswa</h2>
+                <h2 class="text-xl font-bold text-gray-800"><i class="fas fa-list mr-2 text-blue-600"></i>Daftar Mahasiswa</h2>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full">
@@ -166,15 +166,15 @@
     <div id="modal-importCsv" class="fixed inset-0 bg-black/50 z-50 items-center justify-center p-4" style="display:none;">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 animate-fade-in">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-bold text-gray-800"><i class="fas fa-file-csv mr-2 text-indigo-500"></i>Import Mahasiswa via CSV</h3>
+                <h3 class="text-xl font-bold text-gray-800"><i class="fas fa-file-csv mr-2 text-blue-600"></i>Import Mahasiswa via CSV</h3>
                 <button onclick="closeModal('importCsv')" class="text-gray-400 hover:text-gray-600 text-xl"><i class="fas fa-times"></i></button>
             </div>
             
-            <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-4 mb-4 text-xs text-indigo-800">
+            <div class="bg-blue-50 border border-blue-100 rounded-xl p-4 mb-4 text-xs text-blue-900">
                 <p class="font-bold mb-1">Format Kolom File CSV:</p>
-                <code class="bg-white px-2 py-0.5 rounded border border-indigo-200 block mb-2 font-mono">nim,nama,kelas</code>
+                <code class="bg-white px-2 py-0.5 rounded border border-blue-200 block mb-2 font-mono">nim,nama,kelas</code>
                 <p>Contoh isi file:</p>
-                <pre class="bg-white p-2 rounded border border-indigo-200 text-gray-600 font-mono mt-1">2024001,Budi Santoso,TI-1A
+                <pre class="bg-white p-2 rounded border border-blue-200 text-gray-600 font-mono mt-1">2024001,Budi Santoso,TI-1A
 2024002,Siti Aminah,TI-1A
 2024003,Riyan Handriyana,TI-1B</pre>
             </div>
@@ -182,14 +182,14 @@
             <div class="mb-4">
                 <label class="block text-sm font-semibold text-gray-700 mb-2">Pilih File CSV (.csv)</label>
                 <input type="file" id="csvFileInput" accept=".csv" 
-                    class="w-full p-2 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-indigo-400">
+                    class="w-full p-2 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-blue-400">
             </div>
 
             <div id="csvPreview" class="hidden mb-4 max-h-40 overflow-y-auto text-xs bg-gray-50 p-3 rounded-xl border border-gray-200">
             </div>
 
             <button type="button" id="btnUploadCsv" onclick="prosesImportCsv()" 
-                class="w-full bg-gradient-to-r from-indigo-500 to-indigo-600 text-white py-3 rounded-xl hover:shadow-lg transition-all font-semibold">
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl hover:shadow-lg transition-all font-semibold">
                 <i class="fas fa-upload mr-2"></i> Mulai Import Data
             </button>
         </div>
@@ -309,7 +309,7 @@
     <div id="modal-history" class="fixed inset-0 bg-black/50 z-50 items-center justify-center p-4" style="display:none;">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 animate-fade-in max-h-[80vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-bold text-gray-800"><i class="fas fa-history mr-2 text-purple-500"></i>Riwayat Point</h3>
+                <h3 class="text-xl font-bold text-gray-800"><i class="fas fa-history mr-2 text-blue-600"></i>Riwayat Point</h3>
                 <button onclick="closeModal('history')" class="text-gray-400 hover:text-gray-600 text-xl"><i class="fas fa-times"></i></button>
             </div>
             <div id="historyContent">
