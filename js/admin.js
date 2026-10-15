@@ -67,11 +67,11 @@ async function loadStats() {
         document.getElementById('totalMahasiswa').textContent = totalMhs || 0;
 
         // Total points given
-        const { data: pointsData } = await supabaseClient
-            .from('point_history')
-            .select('jumlah')
-            .eq('tipe', 'tambah');
-        const totalPts = (pointsData || []).reduce((sum, p) => sum + p.jumlah, 0);
+        const { data: mahasiswaData } = await supabaseClient
+            .from('mahasiswa')
+            .select('total_point');
+
+        const totalPts = (mahasiswaData || []).reduce((sum, m) => sum + (m.total_point || 0), 0);
         document.getElementById('totalPoints').textContent = totalPts;
 
         // Today's transactions
